@@ -225,6 +225,84 @@ const DayView: React.FC = () => {
     </div>
   );
 
+  // Visual table floorplan inspired by provided mock
+  const TableFloorplan = () => {
+    const nowIso = new Date().toISOString().split('T')[1]?.slice(0,5) || '00:00';
+    const reservationsByTable = new Map<string, Reservation | undefined>();
+    mockTables.forEach((t) => {
+      const forTable = dayReservations
+        .filter((r) => r.tableNumber === t.number)
+        .sort((a, b) => (a.time < b.time ? -1 : 1));
+      // choose next upcoming at/after now, or the first of the day
+      const next = forTable.find((r) => r.time >= nowIso) || forTable[0];
+      reservationsByTable.set(t.number, next);
+    });
+
+    const renderTable = (tableNumber: string, capacity: number) => {
+      const r = reservationsByTable.get(tableNumber);
+      const statusColor = r?.status === 'confirmed'
+        ? 'ring-2 ring-green-400'
+        : r?.status === 'pending'
+        ? 'ring-2 ring-amber-400'
+        : r?.status === 'cancelled'
+        ? 'ring-2 ring-red-400'
+        : 'ring-1 ring-gray-300 dark:ring-gray-600';
+
+      return (
+        <div key={tableNumber} className="flex flex-col items-center gap-2">
+          <div
+            className={`relative flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 ${statusColor}`}
+            style={{ width: capacity >= 6 ? 96 : 64, height: capacity >= 6 ? 96 : 64, borderRadius: capacity >= 6 ? 9999 : 8 }}
+            title={r ? `${r.guest.firstName} ${r.guest.lastName} • ${r.time} • ${r.partySize}p` : `Table ${tableNumber}`}
+          >
+            <span className="text-xs leading-none">{capacity}</span>
+            {r?.guest.vipStatus && (
+              <span className="absolute -top-2 -right-2 text-[10px] bg-yellow-400 text-yellow-900 rounded-full px-1">VIP</span>
+            )}
+          </div>
+          <div className="text-center">
+            <div className="text-xs text-gray-700 dark:text-gray-300">Table {tableNumber}</div>
+            {r ? (
+              <div className="text-[11px] text-gray-500 dark:text-gray-400">
+                {r.guest.firstName} {r.guest.lastName.charAt(0)}. • {r.time}
+              </div>
+            ) : (
+              <div className="text-[11px] text-gray-400">Available</div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Table Management • Floorplan</h3>
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400"><span className="w-3 h-3 rounded-full bg-green-400 inline-block"></span> Confirmed</div>
+            <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400"><span className="w-3 h-3 rounded-full bg-amber-400 inline-block"></span> Pending</div>
+            <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400"><span className="w-3 h-3 rounded-full bg-red-400 inline-block"></span> Cancelled</div>
+          </div>
+        </div>
+
+        {/* Yard/grid */}
+        <div className="grid grid-cols-4 gap-10 justify-items-center">
+          {mockTables.map((t) => renderTable(t.number, t.capacity))}
+        </div>
+
+        {/* Side rail for small 2-top booths like in mockup */}
+        <div className="mt-8 grid grid-cols-6 gap-6">
+          {[1,2,3,4,5,6].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-10 h-16 rounded-md bg-gray-200 dark:bg-gray-700 ring-1 ring-gray-300 dark:ring-gray-600 flex items-center justify-center text-[11px] text-gray-700 dark:text-gray-300">2</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Booth {i}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   // Table Management Component
   const TableManagement = () => (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -844,7 +922,7 @@ const DayView: React.FC = () => {
 
           {/* Tab Content */}
           {activeTab === 'timeline' && <TimeGrid />}
-          {activeTab === 'tables' && <TableManagement />}
+          {activeTab === 'tables' && <TableFloorplan />}
           {activeTab === 'events' && <SpecialEvents />}
           {activeTab === 'payments' && <PaymentTracking />}
           {activeTab === 'settings' && <DailySettings />}

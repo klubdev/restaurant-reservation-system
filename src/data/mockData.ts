@@ -1,4 +1,4 @@
-import { Guest, Reservation, Table, RestaurantSettings, Visit, DashboardMetrics, Prepayment, User, Task, EmailTemplate } from '@/types/restaurant';
+import { Guest, Reservation, Table, RestaurantSettings, Visit, DashboardMetrics, Prepayment, User, Task, EmailTemplate, GiftCard, GiftCardSale } from '@/types/restaurant';
 
 export const mockGuests: Guest[] = [
   {
@@ -1490,6 +1490,92 @@ Best regards,
     variables: ['guestName', 'restaurantName', 'date', 'time', 'partySize', 'declineReason', 'alternativeDate', 'alternativeTime', 'restaurantPhone', 'restaurantAddress', 'restaurantEmail'],
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
+  }
+];
+
+export const mockGiftCards: GiftCard[] = [
+  {
+    id: 'gc-1001',
+    code: 'TAV-9F3A-2024',
+    amount: 100,
+    currency: 'EUR',
+    remainingBalance: 100,
+    status: 'active',
+    purchaserName: 'Eva Eekman',
+    purchaserEmail: 'eva.eekman@restaurant.com',
+    message: 'Happy Birthday! Enjoy a special dinner at Tavelle.',
+    issuedDate: new Date().toISOString(),
+    expiryDate: undefined,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'gc-1002',
+    code: 'TAV-VAL-50',
+    amount: 50,
+    currency: 'EUR',
+    remainingBalance: 20,
+    status: 'redeemed',
+    issuedToGuestId: '8',
+    issuedToGuest: mockGuests[7],
+    purchaserName: 'Michael Brown',
+    purchaserEmail: 'mike.brown@email.com',
+    message: 'For your special Valentine\'s dinner',
+    issuedDate: new Date().toISOString(),
+    expiryDate: undefined,
+    redeemedReservationId: '14',
+    redeemedReservation: undefined,
+    redeemedDate: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'gc-1003',
+    code: 'TAV-200-CORP',
+    amount: 200,
+    currency: 'EUR',
+    remainingBalance: 200,
+    status: 'active',
+    purchaserName: 'Daniel Rodriguez',
+    purchaserEmail: 'daniel.rodriguez@email.com',
+    message: 'Corporate thank-you gift',
+    issuedDate: new Date().toISOString(),
+    expiryDate: undefined,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }
+];
+
+export const mockGiftCardSales: GiftCardSale[] = [
+  {
+    id: 'gcs-1',
+    giftCardId: 'gc-1001',
+    giftCard: undefined as unknown as GiftCard,
+    saleAmount: 100,
+    paymentMethod: 'credit_card',
+    purchaserName: 'Eva Eekman',
+    purchaserEmail: 'eva.eekman@restaurant.com',
+    saleDate: new Date().toISOString(),
+  },
+  {
+    id: 'gcs-2',
+    giftCardId: 'gc-1002',
+    giftCard: undefined as unknown as GiftCard,
+    saleAmount: 50,
+    paymentMethod: 'paypal',
+    purchaserName: 'Michael Brown',
+    purchaserEmail: 'mike.brown@email.com',
+    saleDate: new Date().toISOString(),
+  },
+  {
+    id: 'gcs-3',
+    giftCardId: 'gc-1003',
+    giftCard: undefined as unknown as GiftCard,
+    saleAmount: 200,
+    paymentMethod: 'bank_transfer',
+    purchaserName: 'Daniel Rodriguez',
+    purchaserEmail: 'daniel.rodriguez@email.com',
+    saleDate: new Date().toISOString(),
   }
 ];
 

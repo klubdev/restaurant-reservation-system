@@ -141,6 +141,38 @@ export interface EmailTemplate {
   updatedAt: string;
 }
 
+export interface GiftCard {
+  id: string;
+  code: string;
+  amount: number;
+  currency: 'EUR';
+  remainingBalance: number;
+  status: 'active' | 'redeemed' | 'expired' | 'void';
+  issuedToGuestId?: string;
+  issuedToGuest?: Guest;
+  purchaserName?: string;
+  purchaserEmail?: string;
+  message?: string;
+  issuedDate: string;
+  expiryDate?: string;
+  redeemedReservationId?: string;
+  redeemedReservation?: Reservation;
+  redeemedDate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GiftCardSale {
+  id: string;
+  giftCardId: string;
+  giftCard: GiftCard;
+  saleAmount: number;
+  paymentMethod: 'credit_card' | 'bank_transfer' | 'cash' | 'paypal' | 'other';
+  purchaserName: string;
+  purchaserEmail: string;
+  saleDate: string;
+}
+
 export interface DashboardMetrics {
   totalReservations: number;
   confirmedReservations: number;

@@ -59,6 +59,11 @@ const navItems: NavItem[] = [
     path: "/restaurant?view=prepayments",
   },
   {
+    icon: <PageIcon />,
+    name: "Gift Cards",
+    path: "/restaurant?view=gift-cards",
+  },
+  {
     icon: <TaskIcon />,
     name: "Tasks",
     path: "/restaurant?view=tasks",

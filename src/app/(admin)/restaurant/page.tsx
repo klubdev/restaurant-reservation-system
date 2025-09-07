@@ -9,11 +9,12 @@ import GuestOverview from '@/components/restaurant/guests/GuestOverview';
 import RestaurantSettings from '@/components/restaurant/settings/RestaurantSettings';
 import NewReservations from '@/components/restaurant/reservations/NewReservations';
 import Prepayments from '@/components/restaurant/prepayments/Prepayments';
+import GiftCards from '@/components/restaurant/gift-cards/GiftCards';
 import KanbanBoard from '@/components/restaurant/kanban/KanbanBoard';
 import ReservationDetail from '@/components/restaurant/reservation/ReservationDetail';
 import GuestDetail from '@/components/restaurant/guests/GuestDetail';
 
-type RestaurantPage = 'dashboard' | 'calendar' | 'day-view' | 'guests' | 'reservations' | 'prepayments' | 'tasks' | 'settings';
+type RestaurantPage = 'dashboard' | 'calendar' | 'day-view' | 'guests' | 'reservations' | 'prepayments' | 'gift-cards' | 'tasks' | 'settings';
 
 const RestaurantPageContent: React.FC = () => {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ const RestaurantPageContent: React.FC = () => {
   // Handle URL parameters for different views
   useEffect(() => {
     const view = searchParams.get('view');
-    if (view && ['dashboard', 'calendar', 'day-view', 'guests', 'reservations', 'prepayments', 'tasks', 'settings'].includes(view)) {
+    if (view && ['dashboard', 'calendar', 'day-view', 'guests', 'reservations', 'prepayments', 'gift-cards', 'tasks', 'settings'].includes(view)) {
       setActivePage(view as RestaurantPage);
     }
   }, [searchParams]);
@@ -44,6 +45,8 @@ const RestaurantPageContent: React.FC = () => {
         return <NewReservations />;
       case 'prepayments':
         return <Prepayments />;
+      case 'gift-cards':
+        return <GiftCards />;
       case 'tasks':
         return <KanbanBoard />;
       case 'settings':

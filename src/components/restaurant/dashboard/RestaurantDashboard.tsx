@@ -5,6 +5,8 @@ import { mockDashboardMetrics } from '@/data/mockData';
 import ReservationStats from './ReservationStats';
 import RevenueChart from './RevenueChart';
 import PopularTimesChart from './PopularTimesChart';
+import CitiesInNetherlands from './CitiesInNetherlands';
+import RecentReservations from './RecentReservations';
 import TopGuests from './TopGuests';
 import TodayReservations from './TodayReservations';
 
@@ -45,8 +47,8 @@ const RestaurantDashboard: React.FC = () => {
 
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TopGuests guests={metrics.topGuests} />
-        <TodayReservations />
+        <CitiesInNetherlands />
+        <RecentReservations />
       </div>
     </div>
   );

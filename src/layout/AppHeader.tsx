@@ -7,9 +7,15 @@ import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import GuestDetail from "@/components/restaurant/guests/GuestDetail";
+import { mockGuests } from "@/data/mockData";
+import type { Guest } from "@/types/restaurant";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Guest[]>([]);
+  const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
@@ -43,6 +49,7 @@ const AppHeader: React.FC = () => {
   }, []);
 
   return (
+    <>
     <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 xl:border-b">
       <div className="flex flex-col items-center justify-between grow xl:flex-row xl:px-6">
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 xl:justify-normal xl:border-b-0 xl:px-0 xl:py-4">
@@ -125,7 +132,7 @@ const AppHeader: React.FC = () => {
           </button>
 
           <div className="hidden xl:block">
-            <form>
+            <form onSubmit={(e)=>{e.preventDefault();}}>
               <div className="relative">
                 <span className="absolute -translate-y-1/2 left-4 top-1/2 pointer-events-none">
                   <svg
@@ -147,13 +154,39 @@ const AppHeader: React.FC = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search or type command..."
+                  placeholder="Search guests by name, email or phone..."
                   className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
+                  value={searchQuery}
+                  onChange={(e)=>{
+                    const q = e.target.value.toLowerCase().trim();
+                    setSearchQuery(e.target.value);
+                    if (!q){ setSearchResults([]); return; }
+                    const results = mockGuests.filter((g)=>
+                      `${g.firstName} ${g.lastName}`.toLowerCase().includes(q) ||
+                      (g.email||'').toLowerCase().includes(q) ||
+                      (g.phone||'').toLowerCase().includes(q)
+                    ).slice(0,5);
+                    setSearchResults(results);
+                  }}
                 />
                 <button className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
                   <span> ⌘ </span>
                   <span> K </span>
                 </button>
+                {searchResults.length > 0 && (
+                  <div className="absolute z-50 mt-2 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+                    {searchResults.map((g)=> (
+                      <button
+                        type="button"
+                        key={g.id}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={()=>{ setSelectedGuestId(g.id); setSearchQuery(""); setSearchResults([]); }}
+                      >
+                        {g.firstName} {g.lastName} — {g.email ?? ''} {g.phone ?? ''}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -178,6 +211,10 @@ const AppHeader: React.FC = () => {
         </div>
       </div>
     </header>
+    {selectedGuestId && (
+      <GuestDetail guestId={selectedGuestId} onClose={()=>setSelectedGuestId(null)} />
+    )}
+    </>
   );
 };
 
